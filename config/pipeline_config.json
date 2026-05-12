@@ -1,45 +1,35 @@
 {
-  "task": "Generate pipeline_config.json with sources, target, settings",
-  "sources": [
-    {
-      "id": "src_coingecko_markets",
-      "url": "https://api.coingecko.com/api/v3/coins/markets",
-      "method": "GET",
-      "params": {
-        "vs_currency": "usd",
-        "order": "market_cap_desc",
-        "per_page": 50,
-        "page": 1,
-        "sparkline": false,
-        "price_change_percentage": "24h,7d"
-      }
-    },
-    {
-      "id": "src_coingecko_detail",
-      "url": "https://api.coingecko.com/api/v3/coins/{coin_id}",
-      "method": "GET",
-      "params": {}
-    },
-    {
-      "id": "src_exchange_rates",
-      "url": "https://open.er-api.com/v6/latest/USD",
-      "method": "GET",
-      "params": {}
-    }
-  ],
+  "sources": [],
   "target": {
-    "schema": "manual",
-    "table": "crypto_market_snapshot",
-    "load_strategy": "truncate_insert"
+    "table": "public.target_data",
+    "credentials": {
+      "password": "${DB_PASSWORD}"
+    }
   },
-  "env_vars": [
-    "DB_PORT",
-    "DB_PASSWORD",
-    "DB_NAME",
-    "DB_HOST",
-    "DB_USER"
-  ],
-  "rules": [
-    "All credentials must reference env vars, never hardcoded values"
-  ]
+  "pipeline_settings": {
+    "schedule": "cron(0 0 * * ? *)",
+    "retry_policy": {
+      "max_retries": 3,
+      "retry_interval": 300
+    }
+  },
+  "retry_policies": {
+    "max_retries": 3,
+    "retry_interval": 300
+  },
+  "monitoring": {
+    "enabled": true,
+    "tool": "Prometheus",
+    "alerts": {
+      "job_failure": {
+        "enabled": true,
+        "threshold": 1
+      },
+      "data_quality": {
+        "enabled": true,
+        "threshold": 5
+      }
+    }
+  },
+  "schedule": "cron(0 0 * * ? *)"
 }
