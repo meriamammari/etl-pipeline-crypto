@@ -1,72 +1,60 @@
-# POC-CRYPTO-001 ETL Pipeline Documentation
+# ETL Pipeline README
 
-## Architecture Overview
-The POC-CRYPTO-001 ETL pipeline is designed to extract cryptocurrency market data from the CoinGecko API and exchange rate data from the Open Exchange Rates API. The pipeline processes this data and loads it into a PostgreSQL database, specifically the `manual.crypto_market_snapshot` table. The architecture consists of the following components:
+## Overview
+The ETL Pipeline is designed to extract, transform, and load data into the `public.target_data` table. This pipeline is scheduled to run at regular intervals to ensure that the target data is always up-to-date.
 
-1. **Data Sources**:
-   - **CoinGecko Markets API**: Provides real-time market data for various cryptocurrencies.
-   - **Exchange Rates API**: Supplies the latest exchange rates for USD against other currencies.
+## Architecture
+The ETL Pipeline consists of three main components:
+1. **Extraction**: Data is extracted from various sources (currently none specified).
+2. **Transformation**: Data is transformed as per business rules (currently none specified).
+3. **Loading**: The transformed data is loaded into the `public.target_data` table.
 
-2. **Data Processing**:
-   - The pipeline extracts data from the APIs, applies business rules for categorization, and transforms the data as necessary.
+A high-level architecture diagram can be found in the documentation folder.
 
-3. **Data Loading**:
-   - The processed data is loaded into the target PostgreSQL database using a truncate and insert strategy.
-
-## Setup Instructions
-To set up the ETL pipeline, follow these steps:
-
-1. **Install Required Packages**:
-   Ensure you have Python 3.7 or higher installed. Then, install the required packages using pip:
+## Installation
+To install the ETL Pipeline, follow these steps:
+1. Clone the repository:
    ```
-   pip install requests psycopg2-binary python-dotenv
+   git clone https://github.com/yourusername/etl-pipeline.git
    ```
-
-2. **Environment Configuration**:
-   Create a `.env` file in the root directory of the project and add the following environment variables:
+2. Navigate to the project directory:
    ```
-   DATABASE_URL=postgresql://username:password@localhost:5432/your_database
+   cd etl-pipeline
+   ```
+3. Install the required dependencies:
+   ```
+   pip install -r requirements.txt
    ```
 
-   Replace `username`, `password`, and `your_database` with your PostgreSQL credentials and database name.
+## Configuration
+Configuration settings can be found in the `config.yaml` file. Update the following parameters as needed:
+- Database connection details
+- Logging settings
 
-## How to Run the Pipeline
-To execute the ETL pipeline, run the following command in your terminal:
+## Run
+To run the ETL Pipeline, execute the following command:
 ```
-python etl_pipeline.py
+python main.py
 ```
-Ensure that your PostgreSQL database is running and accessible.
+The pipeline is scheduled to run every day at midnight using a cron job:
+```
+0 0 * * * /usr/bin/python3 /path/to/your/etl-pipeline/main.py
+```
 
-## Table Schema Summary
-The target table `manual.crypto_market_snapshot` has the following schema:
+## Testing
+To run the tests for the ETL Pipeline, use the following command:
+```
+pytest tests/
+```
+Ensure that all tests pass before deploying the pipeline to production.
 
-| Column Name                     | Data Type |
-|---------------------------------|-----------|
-| coin_id                         | TEXT      |
-| symbol                          | TEXT      |
-| name                            | TEXT      |
-| image_url                       | TEXT      |
-| market_cap_rank                 | INTEGER   |
-| price_usd                       | NUMERIC   |
-| price_eur                       | NUMERIC   |
-| price_gbp                       | NUMERIC   |
-| price_jpy                       | NUMERIC   |
-| price_chf                       | NUMERIC   |
-| price_cad                       | NUMERIC   |
-| market_cap_usd                  | NUMERIC   |
-| fully_diluted_valuation_usd     | NUMERIC   |
-| mcap_fdv_ratio                  | NUMERIC   |
-| volume_24h_usd                  | NUMERIC   |
-| high_24h_usd                    | NUMERIC   |
-| low_24h_usd                     | NUMERIC   |
-| change_24h_abs                  | NUMERIC   |
-| change_24h_pct                  | NUMERIC   |
-| change_7d_pct                   | NUMERIC   |
-| sentiment_label                 | TEXT      |
-| market_cap_category             | TEXT      |
+## API Sources
+Currently, there are no specified API sources for data extraction. Future implementations may include various APIs as data sources.
 
-The pipeline applies the following business rules during data processing:
-1. **Sentiment Label**: Categorizes sentiment based on the 24-hour price change percentage.
-2. **Market Cap Category**: Categorizes market cap based on the market cap in USD.
+## Troubleshooting
+If you encounter issues while running the ETL Pipeline, consider the following steps:
+1. Check the logs located in the `logs/` directory for any error messages.
+2. Ensure that the database connection details in `config.yaml` are correct.
+3. Verify that the necessary permissions are granted for the database user.
 
-This documentation provides a comprehensive overview of the POC-CRYPTO-001 ETL pipeline, including its architecture, setup instructions, execution steps, and table schema.
+For further assistance, refer to the user guide or contact the development team.
